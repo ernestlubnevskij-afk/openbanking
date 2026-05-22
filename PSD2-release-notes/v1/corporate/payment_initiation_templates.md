@@ -18,10 +18,12 @@ Response body schema remains the same for available templates in corporate payme
 
 ## GET /templates
 #### comparison of available templates
-| **V8**                          | **V1**                                        | **Comments**                   |
-|---------------------------------|-----------------------------------------------|--------------------------------|
-| `se-domestic-credit-transfers`  | `corporate-se-domestic-credit-transfers`      | Changed template name          |
-| _Not present_                   | `corporate-instant-sepa-credit-transfers`     | Changed template name          |
+| **V8**                         | **V1**                                         | **Comments**                   |
+|--------------------------------|------------------------------------------------|--------------------------------|
+| `se-domestic-credit-transfers` | `corporate-se-domestic-credit-transfers`       | Changed template name          |
+| _Not present_                  | `corporate-instant-sepa-credit-transfers`      | Changed template name          |
+| `sepa-credit-transfers`        | `corporate-sepa-credit-transfers`              | Changed template name          |
+| `se-domestic-credit-transfers` | `corporate-se-domestic-alias-credit-transfers` | Changed template name          |
 ---
 <br/>
 
@@ -57,5 +59,20 @@ Response body schema remains the same for available templates in corporate payme
 ### GET /templates/corporate-instant-sepa-credit-transfers
 #### corporate-instant-sepa-credit-transfers is new template and there is no corresponding template in V8
 
+---
+<br/>
+
+### GET /templates/corporate-se-domestic-alias-credit-transfers
+#### changes in `corporate-se-domestic-alias-credit-transfers` template v1 comparing to `se-domestic-credit-transfers` template v8
+
+
+| **V8**                   | **V1**                 | **Comments**    |
+|--------------------------|------------------------|-----------------|
+| `creditorAccount.iban`   | _removed_              | Removed fields  |
+| `instructionId`          | _removed_              | Removed fields  |
+| `creditorAccountMessage` | _removed_              | Removed fields  |
+| `creditorAgentBIC`       | _removed_              | Removed fields  |
+| `creditorAgentOther`     | _removed_              | Removed fields  |
+| _Not present_            | `debtorAccountMessage` | Added new field |
 ---
 <br/>

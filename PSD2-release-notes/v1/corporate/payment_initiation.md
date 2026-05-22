@@ -1,7 +1,7 @@
 #  payment initiation changes from V8 to V1 condensed version
 
 ## Description of changes
-Payment initiation (PIS v8) flow was separated to private and corporate, 
+Payment initiation (PIS v8) flow was separated to private and corporate,
 this changes is acceptable for corporate flow only.
 ---
 <br/>
@@ -46,61 +46,61 @@ this changes is acceptable for corporate flow only.
 <br/>
 
 ### Creates a payment initiation (POST /payments/{paymentProduct})
-| **Request body V1 **                                                                                                                             | **Comments** |
-|--------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
-| `templateId`                                                                                                                                     |              |
-| `instructionId`                                                                                                                                  |              |
-| `endToEndIdentification`                                                                                                                         |              |
-| `instructedAmount.currency` <br/> `instructedAmount.amount`                                                                                      |              |
-| `requestedExecutionDate`                                                                                                                         |              |
-| `debtorAccount.iban` <br/> `debtorAccount.bban`                                                                                                  |              |
-| `creditorAccount.iban`                                                                                                                           |              |
-| `creditorAgentBIC`                                                                                                                               |              |
-| `creditorName`                                                                                                                                   |              |
-| `debtorAccountMessage`                                                                                                                           | new field    |
-| `regulatoryReportings.debitCreditReportingIndicator` <br/> `regulatoryReportings.reportingCode` <br/> `regulatoryReportings.detailsInformation`  | new fields   |
-| `remittanceInformationUnstructured`                                                                                                              |              |
-| `remittanceInformationStructured.reference` <br/> `remittanceInformationStructured.referenceType`                                                |              |
+| **Request body V1 **                                                                                                                            | **Comments** |
+|-------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
+| `templateId`                                                                                                                                    |              |
+| `instructionId`                                                                                                                                 |              |
+| `endToEndIdentification`                                                                                                                        |              |
+| `instructedAmount.currency` <br/> `instructedAmount.amount`                                                                                     |              |
+| `requestedExecutionDate`                                                                                                                        |              |
+| `debtorAccount.iban` <br/> `debtorAccount.bban`                                                                                                 |              |
+| `creditorAccount.iban`  <br/> `creditorAccount.pgnr`  <br/> `creditorAccount.bgnr`                                                              |              |
+| `creditorAgentBIC`                                                                                                                              |              |
+| `creditorName`                                                                                                                                  |              |
+| `debtorAccountMessage`                                                                                                                          | new field    |
+| `regulatoryReportings.debitCreditReportingIndicator` <br/> `regulatoryReportings.reportingCode` <br/> `regulatoryReportings.detailsInformation` | new fields   |
+| `remittanceInformationUnstructured`                                                                                                             |              |
+| `remittanceInformationStructured.reference` <br/> `remittanceInformationStructured.referenceType`                                               |              |
 
 <br/>
 
-| **Response body V1 **                                                                                                                            | **Comments** |
-|--------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
-| `templateId`                                                                                                                                     |              |
-| `instructionId`                                                                                                                                  |              |
-| `transactionStatus`                                                                                                                              | new field    |
-| `endToEndIdentification`                                                                                                                         |              |
-| `instructedAmount.currency` <br/> `instructedAmount.amount`                                                                                      |              |
-| `requestedExecutionDate`                                                                                                                         |              |
-| `debtorAccount.iban`   <br> `debtorAccount.bban`                                                                                                 |              |  
-| `creditorAccount.iban`                                                                                                                           |              |
-| `creditorAgentBIC`                                                                                                                               |              |
-| `creditorName`                                                                                                                                   |              |
-| `debtorAccountMessage`                                                                                                                           | new field    |
-| `regulatoryReportings.debitCreditReportingIndicator` <br/> `regulatoryReportings.reportingCode` <br/> `regulatoryReportings.detailsInformation`  | new fields   |
-| `remittanceInformationUnstructured`                                                                                                              |              |
-| `remittanceInformationStructured.reference` <br/> `remittanceInformationStructured.referenceType`                                                |              |
-|                                                                                                                                                  |              |
+| **Response body V1 **                                                                                                                           | **Comments** |
+|-------------------------------------------------------------------------------------------------------------------------------------------------|--------------|
+| `templateId`                                                                                                                                    |              |
+| `instructionId`                                                                                                                                 |              |
+| `transactionStatus`                                                                                                                             | new field    |
+| `endToEndIdentification`                                                                                                                        |              |
+| `instructedAmount.currency` <br/> `instructedAmount.amount`                                                                                     |              |
+| `requestedExecutionDate`                                                                                                                        |              |
+| `debtorAccount.iban`   <br> `debtorAccount.bban`                                                                                                |              |  
+| `creditorAccount.iban`   <br/> `creditorAccount.pgnr`  <br/> `creditorAccount.bgnr`                                                             |              |
+| `creditorAgentBIC`                                                                                                                              |              |
+| `creditorName`                                                                                                                                  |              |
+| `debtorAccountMessage`                                                                                                                          | new field    |
+| `regulatoryReportings.debitCreditReportingIndicator` <br/> `regulatoryReportings.reportingCode` <br/> `regulatoryReportings.detailsInformation` | new fields   |
+| `remittanceInformationUnstructured`                                                                                                             |              |
+| `remittanceInformationStructured.reference` <br/> `remittanceInformationStructured.referenceType`                                               |              |
+|                                                                                                                                                 |              |
 ---
 <br/>
 
 ### Get the payment initiation (GET /payments/{paymentProduct}/{paymentId})
-| **Response body V1 **                                                                                                                         | **Comments** |
-|-----------------------------------------------------------------------------------------------------------------------------------------------|--------------|
-| `templateId`                                                                                                                                  |              |
-| `instructionId`                                                                                                                               |              |
-| `endToEndIdentification`                                                                                                                      |              |
-| `instructedAmount.currency` <br> `instructedAmount.amount`                                                                                    |              |
-| `requestedExecutionDate`                                                                                                                      |              |
-| `debtorAccount.iban` <br> `debtorAccount.bban`                                                                                                |              |
-| `creditorAccount.iban`                                                                                                                        |              |
-| `creditorAgentBIC`                                                                                                                            |              |
-| `creditorName`                                                                                                                                |              |
-| `debtorAccountMessage`                                                                                                                        | new field    |
-| `regulatoryReporting.debitCreditReportingIndicator` <br/> `regulatoryReporting.reportingCode` <br/> `regulatoryReporting.detailsInformation`  | new fields   |
-| `remittanceInformationUnstructured`                                                                                                           |              |
-| `remittanceInformationStructured.reference` <br/> `remittanceInformationStructured.referenceType`                                             |              |
-| `links.startAuthorisationWithAuthenticationMethodSelection.href` <br/> `links.status.href`                                                    |              |
+| **Response body V1 **                                                                                                                        | **Comments** |
+|----------------------------------------------------------------------------------------------------------------------------------------------|--------------|
+| `templateId`                                                                                                                                 |              |
+| `instructionId`                                                                                                                              |              |
+| `endToEndIdentification`                                                                                                                     |              |
+| `instructedAmount.currency` <br> `instructedAmount.amount`                                                                                   |              |
+| `requestedExecutionDate`                                                                                                                     |              |
+| `debtorAccount.iban` <br> `debtorAccount.bban`                                                                                               |              |
+| `creditorAccount.iban`   <br/> `creditorAccount.pgnr`  <br/> `creditorAccount.bgnr`                                                          |              |
+| `creditorAgentBIC`                                                                                                                           |              |
+| `creditorName`                                                                                                                               |              |
+| `debtorAccountMessage`                                                                                                                       | new field    |
+| `regulatoryReporting.debitCreditReportingIndicator` <br/> `regulatoryReporting.reportingCode` <br/> `regulatoryReporting.detailsInformation` | new fields   |
+| `remittanceInformationUnstructured`                                                                                                          |              |
+| `remittanceInformationStructured.reference` <br/> `remittanceInformationStructured.referenceType`                                            |              |
+| `links.startAuthorisationWithAuthenticationMethodSelection.href` <br/> `links.status.href`                                                   |              |
 ---
 <br/>
 

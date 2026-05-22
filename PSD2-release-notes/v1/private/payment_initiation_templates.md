@@ -18,10 +18,13 @@ Response body schema remains the same for available templates in private payment
 
 ## GET /templates
 #### comparison of available templates
-| **V8**                                             | **V1**                                       | **Comments**                   |
-|----------------------------------------------------|----------------------------------------------|--------------------------------|
-| `swedish-domestic-private-credit-transfers`        | `private-se-domestic-credit-transfers`       | Changed template name          |
-| `swedish-domestic-private-own-accounts-transfers`  | `private-se-domestic-own-credit-transfers`   | Changed template name          |
+| **V8**                                            | **V1**                                       | **Comments**                   |
+|---------------------------------------------------|----------------------------------------------|--------------------------------|
+| `swedish-domestic-private-credit-transfers`       | `private-se-domestic-credit-transfers`       | Changed template name          |
+| `swedish-domestic-private-own-accounts-transfers` | `private-se-domestic-own-credit-transfers`   | Changed template name          |
+| `swedish-domestic-private-bankgiros`              | `private-se-domestic-alias-credit-transfers` | Changed template name          |
+| `swedish-domestic-private-plusgiros`              | `private-se-domestic-alias-credit-transfers` | Changed template name          |
+| `sepa-credit-transfers`                           | `private-sepa-credit-transfers`              | Changed template name          |
 ---
 <br/>
 
@@ -42,7 +45,7 @@ Response body schema remains the same for available templates in private payment
 ## Templates APIs comparison
 <br/>
 
-### GET /templates/private-se-domestic-credit-transfers 
+### GET /templates/private-se-domestic-credit-transfers
 #### changes in `private-se-domestic-credit-transfers` template v1 comparing to `swedish-domestic-private-credit-transfers` template v8
 
 
@@ -66,5 +69,27 @@ Response body schema remains the same for available templates in private payment
 | _Not present_<br/>                | `debtorAccount.bban`                | Added new field                   |
 | _Not present_<br/>                | `remittanceInformationUnstructured` | Added new field                   |
 | `creditorAccountMessage`<br/>     | _removed_                           | Removed fields                    |
+---
+<br/>
+
+### GET /templates/private-se-domestic-alias-credit-transfers
+#### changes in `private-se-domestic-alias-credit-transfers` template v1 comparing to `swedish-domestic-private-bankgiros` template v8
+| **V8**                            | **V1**                         | **Comments**                      |
+|-----------------------------------|--------------------------------|-----------------------------------|
+| `templateId`<br/>                 | `templateId`                   | Changed from required to optional |
+| _Not present_<br/>                | `debtorAccount.bban`           | Added new field                   |
+| _Not present_<br/>                | `creditorName`                 | Added new mandatory field         |
+
+---
+<br/>
+
+### GET /templates/private-se-domestic-alias-credit-transfers
+#### changes in `private-se-domestic-alias-credit-transfers` template v1 comparing to `swedish-domestic-private-plusgiros` template v8
+| **V8**                            | **V1**                         | **Comments**                      |
+|-----------------------------------|--------------------------------|-----------------------------------|
+| `templateId`<br/>                 | `templateId`                   | Changed from required to optional |
+| _Not present_<br/>                | `debtorAccount.bban`           | Added new field                   |
+| _Not present_<br/>                | `creditorName`                 | Added new mandatory field         |
+
 ---
 <br/>

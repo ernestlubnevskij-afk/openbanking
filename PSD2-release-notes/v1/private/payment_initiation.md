@@ -1,7 +1,7 @@
 # Private payment initiation changes from V8 to V1 condensed version
 
 ## Description of changes
-Payment initiation (PIS v8) flow was separated to private and corporate, 
+Payment initiation (PIS v8) flow was separated to private and corporate,
 this changes is acceptable for private flow only.
 ---
 <br/>
@@ -46,26 +46,32 @@ this changes is acceptable for private flow only.
 <br/>
 
 ### Creates a payment initiation (POST /payments/{paymentProduct})
-| **Request body V1 **                             | **Comments** |
-|--------------------------------------------------|--------------|
-| `templateId`                                     |              |
-| `InstructedAmount.currency`                      |              |
-| `InstructedAmount.amount`                        |              |
-| `DebtorAccount.iban`                             |              |
-| `DebtorAccount.bban`                             | new field    |
-| `debtorAccountMessage`                           |              |
-| `CreditorAccount.iban`                           |              |
-| `creditorName`                                   |              |
-| `requestedExecutionDate`                         |              |
-| `remittanceInformationUnstructured`              |              |
-| `RemittanceInformationStructured.reference`      |              |
-| `RemittanceInformationStructured.referenceType`  |              |
+| **Request body V1 **                            | **Comments** |
+|-------------------------------------------------|--------------|
+| `templateId`                                    |              |
+| `instructionId`                                 |              |
+| `endToEndIdentification`                        |              |
+| `InstructedAmount.currency`                     |              |
+| `InstructedAmount.amount`                       |              |
+| `DebtorAccount.iban`                            |              |
+| `DebtorAccount.bban`                            | new field    |
+| `debtorAccountMessage`                          |              |
+| `creditorAccount.iban`                          |              |
+| `creditorAccount.pgnr`                          |              |
+| `creditorAccount.bgnr`                          |              |
+| `creditorName`                                  |              |
+| `requestedExecutionDate`                        |              |
+| `remittanceInformationUnstructured`             |              |
+| `RemittanceInformationStructured.reference`     |              |
+| `RemittanceInformationStructured.referenceType` |              |
 <br/>
 
 | **Response body V1 **                           | **Comments** |
 |-------------------------------------------------|--------------|
 | `paymentId`                                     |              |
 | `templateId`                                    |              |
+| `instructionId`                                 |              |
+| `endToEndIdentification`                        |              |
 | `transactionStatus`                             | new field    |
 | `instructedAmount.currency`                     |              |
 | `instructedAmount.amount`                       |              |
@@ -73,6 +79,8 @@ this changes is acceptable for private flow only.
 | `debtorAccount.bban`                            | new field    |
 | `debtorAccountMessage`                          |              |
 | `creditorAccount.iban`                          |              |
+| `creditorAccount.pgnr`                          |              |
+| `creditorAccount.bgnr`                          |              |
 | `creditorName`                                  |              |
 | `requestedExecutionDate`                        |              |
 | `remittanceInformationUnstructured`             |              |
@@ -86,12 +94,16 @@ this changes is acceptable for private flow only.
 | **Response body V1 **                           | **Comments** |
 |-------------------------------------------------|--------------|
 | `templateId`                                    |              |
+| `instructionId`                                 |              |
+| `endToEndIdentification`                        |              |
 | `instructedAmount.currency`                     |              |
 | `instructedAmount.amount`                       |              |
 | `debtorAccount.iban`                            |              |
 | `debtorAccount.bban`                            | new field    |
 | `debtorAccountMessage`                          |              |
 | `creditorAccount.iban`                          |              |
+| `creditorAccount.pgnr`                          |              |
+| `creditorAccount.bgnr`                          |              |
 | `creditorName`                                  |              |
 | `requestedExecutionDate`                        |              |
 | `remittanceInformationUnstructured`             |              |

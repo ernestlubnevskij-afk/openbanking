@@ -1,0 +1,2768 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Private Payment Initiation",
+    "description": "The Private Payment Initiation API provides a secure interface for initiating payments from individual user accounts. It allows third-party applications to submit payment instructions to the bank, specifying the payer, payee, amount, and execution details. <br>This API is intended to be used by third parties’ licensed under PSD2 where users authorize external services to trigger payments, and it supports standard payment formats and secure communication protocols. <br><br>Notes: The payment product scope will be increasing with time. The supported payment products are:<br>&emsp; - &emsp; private-se-domestic-own-credit-transfers <br>&emsp; - &emsp; private-se-domestic-credit-transfers <br>&emsp; - &emsp; private-sepa-credit-transfers <br>&emsp; - &emsp; private-se-domestic-alias-credit-transfers<br><br>For other private payment products please visit <a href=\"https://developer.sebgroup.com/products/psd2-payment-initiation/payment-initiation\">Link to V8</a><br>\n",    "contact": {
+      "email": "oasis@seb.se"
+    },
+    "version": "1.0.0",
+    "x-seb": {
+      "domain": "DOM15",
+      "tribe": "TRI50",
+      "art": "ART168",
+      "team": "TEAM533"
+    },
+    "x-seb-api": {
+      "id": "26ef9806-2a2f-4a6f-9842-42539320152b",
+      "accessibility": "open",
+      "internal-routing-host": "payments"
+    },
+    "x-seb-portal": {
+      "sandbox-uri": "https://api-sandbox.sebgroup.com/pis/private/v1/identified2",
+      "production-uri": "https://tpp-api.sebgroup.com/tpp/pis/private/v1/identified2",
+      "state": "active",
+      "category": "servicing/cash management",
+      "summary": "Payment Initiation",
+      "release-date": "2026-03-16"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api-sandbox.sebgroup.com/pis/private/v1/identified2",
+      "description": "sandbox-uri"
+    },
+    {
+      "url": "https://tpp-api.sebgroup.com/tpp/pis/private/v1/identified2",
+      "description": "production-uri"
+    }
+  ],
+  "tags": [
+    {
+      "name": "PSD2 Initiation",
+      "x-displayName": "PSD2 Initiation"
+    },
+    {
+      "name": "PSD2 Basket",
+      "x-displayName": "PSD2 Basket"
+    }
+  ],
+  "paths": {
+    "/payments/{templateId}": {
+      "post": {
+        "tags": [
+          "PSD2 Initiation"
+        ],
+        "summary": "Initiates payment for a chosen payment product.",
+        "description": "Post a payment initiation request by using the applicable payment template. Transfers between customers own accounts will be processed directly and queued for execution on the requested execution-date. Other payments must be signed by the customer (e.g. through Mobilt BankID) before the payment is executed.",
+        "operationId": "createPayment",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "description": "Describes which payment product this call is in reference to. Needs to match whichever payment you are requesting information",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "private-se-domestic-credit-transfers",
+              "enum": [
+                "private-se-domestic-own-credit-transfers",
+                "private-se-domestic-credit-transfers",
+                "private-sepa-credit-transfers",
+                "private-se-domestic-alias-credit-transfers"
+              ]
+            }
+          },
+          {
+            "name": "PSU-Http-Method",
+            "in": "header",
+            "description": "HTTP method used at the PSU – TPP interface, if available.",
+            "schema": {
+              "type": "string",
+              "example": "POST"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Accepted content types.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "application/json",
+              "enum": [
+                "application/json"
+              ]
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Contains the Bearer Token for OAuth 2.0. ",
+            "required": true,
+            "schema": {
+              "pattern": "^Bearer\\s+.+$",
+              "type": "string"
+            },
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1d_etc"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "Parameter is either an request identification id or a payment reference identification used when initiating a payment. Parameter is set by the third party. Duplicate value on payment reference identification is not allowed. If stated in the request it will be returned in the response. ID of the request, unique to the call, as determined by the initiating party. Same value will be returned in each successful call. Duplicate values being used will lead to errors in payment creation.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+            }
+          },
+          {
+            "name": "PSU-Accept",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,/;q=0.8"
+            }
+          },
+          {
+            "name": "PSU-Accept-Charset",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available. ",
+            "schema": {
+              "type": "string",
+              "example": "ISO-8859-1"
+            }
+          },
+          {
+            "name": "PSU-Accept-Encoding",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate"
+            }
+          },
+          {
+            "name": "PSU-Accept-Language",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "en-US,en;q=0.9,sv;q=0.8"
+          },
+          {
+            "name": "PSU-Device-ID",
+            "in": "header",
+            "description": "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available.",
+            "schema": {
+              "type": "string",
+              "example": "05a18f38-c218-4d1c-a9d0-ac36763580e1"
+            }
+          },
+          {
+            "name": "PSU-Geo-Location",
+            "in": "header",
+            "description": "The forwarded Geo Location of the corresponding HTTP request between PSU and TPP if available. See RFC2426.",
+            "schema": {
+              "type": "string",
+              "example": "GEO:52.506931,13.144558"
+            }
+          },
+          {
+            "name": "PSU-ID",
+            "in": "header",
+            "description": "Send in an expected user-id to verify that the used Authorization token matches the user expected. Can be set to 10 or 12 digit personal number, or a 6 digit XID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PSU-IP-Address",
+            "in": "header",
+            "description": "The IP Address of the PSU, as determined in the communication between PSU and TPP, can be provided if applicable. Provided in either IPv4 or IPv6 format.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "192.0.2.1"
+            }
+          },
+          {
+            "name": "PSU-IP-PORT",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": 8080
+            }
+          },
+          {
+            "name": "PSU-User-Agent",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiatePaymentRequestDto"
+              },
+              "example": {
+                "templateId": "private-se-domestic-credit-transfers",
+                "instructedAmount": {
+                  "currency": "SEK",
+                  "amount": "1.91"
+                },
+                "debtorAccount": {
+                  "iban": "SE8050000000052800025220"
+                },
+                "creditorAccount": {
+                  "iban": "SE1350000000052800015756"
+                },
+                "creditorName": "CreditorName",
+                "debtorAccountMessage": "DBTMSGPP7324",
+                "requestedExecutionDate": "2025-12-11",
+                "remittanceInformationStructured": {
+                  "reference": "RisReference",
+                  "referenceType": "CINV"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Payment instruction containing information about the payment.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Same value that was provided in the request.",
+                "style": "simple",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+                }
+              },
+              "Location": {
+                "description": "The absolute URL where the created resource can be found.",
+                "style": "simple",
+                "schema": {
+                  "type": "string",
+                  "example": "/payments/private-se-domestic-credit-transfers/HYDPRV45251219112625363664000001"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiatePaymentResponseDto"
+                },
+                "example": {
+                  "paymentId": "HYDPRV90251210181729610663000001",
+                  "templateId": "private-se-domestic-credit-transfers",
+                  "transactionStatus": "RCVD",
+                  "instructedAmount": {
+                    "currency": "SEK",
+                    "amount": "1.91"
+                  },
+                  "debtorAccount": {
+                    "iban": "SE8050000000052800025220"
+                  },
+                  "creditorAccount": {
+                    "iban": "SE1350000000052800015756"
+                  },
+                  "debtorAccountMessage": "DBTMSGPP7324",
+                  "creditorName": "CreditorName",
+                  "requestedExecutionDate": "2025-12-11",
+                  "remittanceInformationStructured": {
+                    "reference": "RisReference",
+                    "referenceType": "CINV"
+                  },
+                  "_links": {
+                    "status": {
+                      "href": "/payments/private-se-domestic-credit-transfers/HYDPRV90251210181729610663000001/status"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request <br>* Not including required input parameters, such as 'Accept' header. <br>* Specifying a payment that can not be signed, or does not exist in request body.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 400,
+                  "code": "FORMAT_ERROR"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 401,
+                  "code": "CERTIFICATE_INVALID"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 403,
+                  "code": "CONSENT_UNKNOWN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. <br>* Initiating signing for non-existent payment ID or payment product.<br>* Requesting incorrectly constructed URLs will return this error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 404,
+                  "code": "RESOURCE_UNKNOWN"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 405,
+                  "code": "SERVICE_INVALID"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error. <br>* Error caused by remote technical issues, this status code is used for unforeseen technical issues <br>* Please contact support and include information from the instance field.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 500,
+                  "code": "Internal server error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable. <br>* Returned when service is unavailable due to scheduled reasons, such as maintenance.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 503,
+                  "code": "Service unavailable"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/mock/resetAll": {
+      "patch": {
+        "tags": [
+          "PSD2 Initiation"
+        ],
+        "summary": "Sandbox only; Reset all mock transactions and authorisations for all users.",
+        "description": "This endpoint exists ONLY in the Sandbox environment, there is no production equivalent. Deletes any created transactions in the mock, making funds available for further testing. A call to this endpoint removes all such entity's associated with provided authorisation, for all mock-users.",
+        "operationId": "restAllTppCreatedData",
+        "parameters": [
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "Parameter is either an request identification id or a payment reference identification used when initiating a payment. Parameter is set by the third party. Duplicate value on payment reference identification is not allowed. If stated in the request it will be returned in the response. ID of the request, unique to the call, as determined by the initiating party. Same value will be returned in each successful call. Duplicate values being used will lead to errors in payment creation.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Contains the Bearer Token for OAuth 2.0. ",
+            "required": true,
+            "schema": {
+              "pattern": "^Bearer\\s+.+$",
+              "type": "string"
+            },
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1d_etc"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A message for successful reset.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetResponseDto"
+                },
+                "example": {
+                  "resultMessage": "Reset for client: 9311239581"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request <br>* Not including required input parameters, such as 'Accept' header. <br>* Specifying a payment that can not be signed, or does not exist in request body.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 400,
+                  "code": "FORMAT_ERROR"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 401,
+                  "code": "CERTIFICATE_INVALID"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 403,
+                  "code": "CONSENT_UNKNOWN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. <br>* Initiating signing for non-existent payment ID or payment product.<br>* Requesting incorrectly constructed URLs will return this error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 404,
+                  "code": "RESOURCE_UNKNOWN"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 405,
+                  "code": "SERVICE_INVALID"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error. <br>* Error caused by remote technical issues, this status code is used for unforeseen technical issues <br>* Please contact support and include information from the instance field.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 500,
+                  "code": "Internal server error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable. <br>* Returned when service is unavailable due to scheduled reasons, such as maintenance.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 503,
+                  "code": "Service unavailable"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/{templateId}/{paymentId}": {
+      "get": {
+        "tags": [
+          "PSD2 Initiation"
+        ],
+        "summary": "Returns the previously posted payment initiation.",
+        "description": "Returns the request body of the previously posted payment initiation.",
+        "operationId": "getPayment",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "description": "Describes which payment product this call is in reference to. Needs to match whichever payment you are requesting information",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "private-se-domestic-credit-transfers",
+              "enum": [
+                "private-se-domestic-own-credit-transfers",
+                "private-se-domestic-credit-transfers",
+                "private-sepa-credit-transfers",
+                "private-se-domestic-alias-credit-transfers"
+              ]
+            }
+          },
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "Id of the payment initiation",
+            "required": true,
+            "schema": {
+              "pattern": "^HYDPRV\\d{26}$",
+              "type": "string",
+              "example": "HYDPRV31251117155131501240000001"
+            }
+          },
+          {
+            "name": "PSU-Http-Method",
+            "in": "header",
+            "description": "HTTP method used at the PSU – TPP interface, if available.",
+            "schema": {
+              "type": "string",
+              "example": "GET"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Accepted content types.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "application/json",
+              "enum": [
+                "application/json"
+              ]
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Contains the Bearer Token for OAuth 2.0. ",
+            "required": true,
+            "schema": {
+              "pattern": "^Bearer\\s+.+$",
+              "type": "string"
+            },
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1d_etc"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "Parameter is either an request identification id or a payment reference identification used when initiating a payment. Parameter is set by the third party. Duplicate value on payment reference identification is not allowed. If stated in the request it will be returned in the response. ID of the request, unique to the call, as determined by the initiating party. Same value will be returned in each successful call. Duplicate values being used will lead to errors in payment creation.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+            }
+          },
+          {
+            "name": "PSU-Accept",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,/;q=0.8"
+            }
+          },
+          {
+            "name": "PSU-Accept-Charset",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available. ",
+            "schema": {
+              "type": "string",
+              "example": "ISO-8859-1"
+            }
+          },
+          {
+            "name": "PSU-Accept-Encoding",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate"
+            }
+          },
+          {
+            "name": "PSU-Accept-Language",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "en-US,en;q=0.9,sv;q=0.8"
+          },
+          {
+            "name": "PSU-Device-ID",
+            "in": "header",
+            "description": "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available.",
+            "schema": {
+              "type": "string",
+              "example": "05a18f38-c218-4d1c-a9d0-ac36763580e1"
+            }
+          },
+          {
+            "name": "PSU-Geo-Location",
+            "in": "header",
+            "description": "The forwarded Geo Location of the corresponding HTTP request between PSU and TPP if available. See RFC2426.",
+            "schema": {
+              "type": "string",
+              "example": "GEO:52.506931,13.144558"
+            }
+          },
+          {
+            "name": "PSU-ID",
+            "in": "header",
+            "description": "Send in an expected user-id to verify that the used Authorization token matches the user expected. Can be set to 10 or 12 digit personal number, or a 6 digit XID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PSU-IP-Address",
+            "in": "header",
+            "description": "The IP Address of the PSU, as determined in the communication between PSU and TPP, can be provided if applicable. Provided in either IPv4 or IPv6 format.",
+            "schema": {
+              "type": "string",
+              "example": "192.0.2.1"
+            }
+          },
+          {
+            "name": "PSU-IP-PORT",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": 8080
+            }
+          },
+          {
+            "name": "PSU-User-Agent",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A payment initiation body.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Same value that was provided in the request.",
+                "style": "simple",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentResponseDto"
+                },
+                "example": {
+                  "templateId": "private-se-domestic-credit-transfers",
+                  "instructedAmount": {
+                    "currency": "SEK",
+                    "amount": "1.91"
+                  },
+                  "debtorAccount": {
+                    "iban": "SE8050000000052800025220"
+                  },
+                  "creditorAccount": {
+                    "iban": "SE1350000000052800015756"
+                  },
+                  "debtorAccountMessage": "DBTMSGPP7324",
+                  "creditorName": "CreditorName",
+                  "remittanceInformationStructured": {
+                    "reference": "RisReference",
+                    "referenceType": "CINV"
+                  },
+                  "requestedExecutionDate": "2025-12-11",
+                  "_links": {
+                    "status": {
+                      "href": "/payments/private-se-domestic-credit-transfers/HYDPRV90251210181729610663000001/status"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request <br>* Not including required input parameters, such as 'Accept' header. <br>* Specifying a payment that can not be signed, or does not exist in request body.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 400,
+                  "code": "FORMAT_ERROR"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 401,
+                  "code": "CERTIFICATE_INVALID"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 403,
+                  "code": "CONSENT_UNKNOWN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. <br>* Initiating signing for non-existent payment ID or payment product.<br>* Requesting incorrectly constructed URLs will return this error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 404,
+                  "code": "RESOURCE_UNKNOWN"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 405,
+                  "code": "SERVICE_INVALID"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error. <br>* Error caused by remote technical issues, this status code is used for unforeseen technical issues <br>* Please contact support and include information from the instance field.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 500,
+                  "code": "Internal server error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable. <br>* Returned when service is unavailable due to scheduled reasons, such as maintenance.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 503,
+                  "code": "Service unavailable"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "PSD2 Initiation"
+        ],
+        "summary": "Cancel previously initiated payment",
+        "description": "Cancels the specified payment if it is received prior to the cut-off time for the payment product. The successful response to a deletion of a payment falls into three categories depending on: Payment product type, Signed by customer or not, Status in the payment process system. <br><br>* HTTP code 202; Request has been accepted; the client must then check the status of the payment. If the payment status switches to CANC (within a few minutes), then the payment has been deleted.<br> * HTTP code 200; Payment has been deleted successfully and status change to CANC <br>* HTTP code 400; Payment cannot be deleted. <br>",
+        "operationId": "deletePayment",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "description": "Describes which payment product this call is in reference to. Needs to match whichever payment you are requesting information",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "private-se-domestic-credit-transfers",
+              "enum": [
+                "private-se-domestic-own-credit-transfers",
+                "private-se-domestic-credit-transfers",
+                "private-sepa-credit-transfers",
+                "private-se-domestic-alias-credit-transfers"
+              ]
+            }
+          },
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "Id of the payment initiation",
+            "required": true,
+            "schema": {
+              "pattern": "^HYDPRV\\d{26}$",
+              "type": "string",
+              "example": "HYDPRV31251117155131501240000001"
+            }
+          },
+          {
+            "name": "PSU-Http-Method",
+            "in": "header",
+            "description": "HTTP method used at the PSU – TPP interface, if available.",
+            "schema": {
+              "type": "string",
+              "example": "DELETE"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Accepted content types.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "application/json",
+              "enum": [
+                "application/json"
+              ]
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Contains the Bearer Token for OAuth 2.0. ",
+            "required": true,
+            "schema": {
+              "pattern": "^Bearer\\s+.+$",
+              "type": "string"
+            },
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1d_etc"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "Parameter is either an request identification id or a payment reference identification used when initiating a payment. Parameter is set by the third party. Duplicate value on payment reference identification is not allowed. If stated in the request it will be returned in the response. ID of the request, unique to the call, as determined by the initiating party. Same value will be returned in each successful call. Duplicate values being used will lead to errors in payment creation.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+            }
+          },
+          {
+            "name": "PSU-Accept",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,/;q=0.8"
+            }
+          },
+          {
+            "name": "PSU-Accept-Charset",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available. ",
+            "schema": {
+              "type": "string",
+              "example": "ISO-8859-1"
+            }
+          },
+          {
+            "name": "PSU-Accept-Encoding",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate"
+            }
+          },
+          {
+            "name": "PSU-Accept-Language",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "en-US,en;q=0.9,sv;q=0.8"
+          },
+          {
+            "name": "PSU-Device-ID",
+            "in": "header",
+            "description": "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available.",
+            "schema": {
+              "type": "string",
+              "example": "05a18f38-c218-4d1c-a9d0-ac36763580e1"
+            }
+          },
+          {
+            "name": "PSU-Geo-Location",
+            "in": "header",
+            "description": "The forwarded Geo Location of the corresponding HTTP request between PSU and TPP if available. See RFC2426.",
+            "schema": {
+              "type": "string",
+              "example": "GEO:52.506931,13.144558"
+            }
+          },
+          {
+            "name": "PSU-ID",
+            "in": "header",
+            "description": "Send in an expected user-id to verify that the used Authorization token matches the user expected. Can be set to 10 or 12 digit personal number, or a 6 digit XID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PSU-IP-Address",
+            "in": "header",
+            "description": "The IP Address of the PSU, as determined in the communication between PSU and TPP, can be provided if applicable. Provided in either IPv4 or IPv6 format.",
+            "schema": {
+              "type": "string",
+              "example": "192.0.2.1"
+            }
+          },
+          {
+            "name": "PSU-IP-PORT",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": 8080
+            }
+          },
+          {
+            "name": "PSU-User-Agent",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "A payment initiation body.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Same value that was provided in the request.",
+                "style": "simple",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CancelPaymentResponseDto"
+                },
+                "example": {
+                  "transactionStatus": "ACTC",
+                  "_links": {
+                    "status": {
+                      "href": "/payments/private-se-domestic-credit-transfers/HYDPRV90251210181729610663000001/status"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request <br>* Not including required input parameters, such as 'Accept' header. <br>* Specifying a payment that can not be signed, or does not exist in request body.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 400,
+                  "code": "FORMAT_ERROR"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 401,
+                  "code": "CERTIFICATE_INVALID"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 403,
+                  "code": "CONSENT_UNKNOWN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. <br>* Initiating signing for non-existent payment ID or payment product.<br>* Requesting incorrectly constructed URLs will return this error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 404,
+                  "code": "RESOURCE_UNKNOWN"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 405,
+                  "code": "SERVICE_INVALID"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error. <br>* Error caused by remote technical issues, this status code is used for unforeseen technical issues <br>* Please contact support and include information from the instance field.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 500,
+                  "code": "Internal server error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable. <br>* Returned when service is unavailable due to scheduled reasons, such as maintenance.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 503,
+                  "code": "Service unavailable"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/{templateId}/{paymentId}/status": {
+      "get": {
+        "tags": [
+          "PSD2 Initiation"
+        ],
+        "summary": "Get the status of the previously posted payment initiation.",
+        "description": "The status must be checked continuously to make sure that the payment is ready for the next step in the payment process and the recommended polling interval is 5 seconds. To call for the status use the payment id value that was returned in the payment initiation response body. </br></br> The transaction status can have the following states:</br></br>  * RCVD - Received, the payment has been received.</br></br>  * RCVD + link, Received, once \"startAuthorisationWithAuthenticationMethodSelection\" link is shown, the payment system has validated the payment. Please post authenticationMethodId to suitable authorisations endpoint to continue payment flow.</br></br>  * ACTC, AcceptedTechnicalValidation the payment initiation is signed and stored for execution and should be executed on the desired execution date.</br></br>  * ACSC, AcceptedSettlementCompleted, the payment has been executed on the desired date.</br></br>  * CANC, Cancelled, the payment has been cancelled and will not be executed.</br></br>  * RJCT, Rejected, the payment initiation failed. Additional information may be supplied</br></br> to explain why the payment could not be made. A failed payment cannot be corrected;  it must be posted again as a new payment. Payments must be signed by the customer (i.e. through Mobilt BankID) before the payment is executed. This step can be initiated once the associated authentication link is visible in the status endpoint. The payments can either be signed one by one by creating an authorisations sub-resource under the payment; or multiple payments can be signed at once by creating a signing basket (with a group of payment ids) and then creating an authorisations sub-resource under the signing basket.",
+        "operationId": "getPaymentStatus",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "description": "Describes which payment product this call is in reference to. Needs to match whichever payment you are requesting information",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "private-se-domestic-credit-transfers",
+              "enum": [
+                "private-se-domestic-own-credit-transfers",
+                "private-se-domestic-credit-transfers",
+                "private-sepa-credit-transfers",
+                "private-se-domestic-alias-credit-transfers"
+              ]
+            }
+          },
+          {
+            "name": "paymentId",
+            "in": "path",
+            "description": "Id of the payment initiation",
+            "required": true,
+            "schema": {
+              "pattern": "^HYDPRV\\d{26}$",
+              "type": "string",
+              "example": "HYDPRV31251117155131501240000001"
+            }
+          },
+          {
+            "name": "PSU-Http-Method",
+            "in": "header",
+            "description": "HTTP method used at the PSU – TPP interface, if available.",
+            "schema": {
+              "type": "string",
+              "example": "GET"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Accepted content types.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "application/json",
+              "enum": [
+                "application/json"
+              ]
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Contains the Bearer Token for OAuth 2.0. ",
+            "required": true,
+            "schema": {
+              "pattern": "^Bearer\\s+.+$",
+              "type": "string"
+            },
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1d_etc"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "Parameter is either an request identification id or a payment reference identification used when initiating a payment. Parameter is set by the third party. Duplicate value on payment reference identification is not allowed. If stated in the request it will be returned in the response. ID of the request, unique to the call, as determined by the initiating party. Same value will be returned in each successful call. Duplicate values being used will lead to errors in payment creation.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+            }
+          },
+          {
+            "name": "PSU-Accept",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,/;q=0.8"
+            }
+          },
+          {
+            "name": "PSU-Accept-Charset",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available. ",
+            "schema": {
+              "type": "string",
+              "example": "ISO-8859-1"
+            }
+          },
+          {
+            "name": "PSU-Accept-Encoding",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate"
+            }
+          },
+          {
+            "name": "PSU-Accept-Language",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "en-US,en;q=0.9,sv;q=0.8"
+          },
+          {
+            "name": "PSU-Device-ID",
+            "in": "header",
+            "description": "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available.",
+            "schema": {
+              "type": "string",
+              "example": "05a18f38-c218-4d1c-a9d0-ac36763580e1"
+            }
+          },
+          {
+            "name": "PSU-Geo-Location",
+            "in": "header",
+            "description": "The forwarded Geo Location of the corresponding HTTP request between PSU and TPP if available. See RFC2426.",
+            "schema": {
+              "type": "string",
+              "example": "GEO:52.506931,13.144558"
+            }
+          },
+          {
+            "name": "PSU-ID",
+            "in": "header",
+            "description": "Send in an expected user-id to verify that the used Authorization token matches the user expected. Can be set to 10 or 12 digit personal number, or a 6 digit XID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PSU-IP-Address",
+            "in": "header",
+            "description": "The IP Address of the PSU, as determined in the communication between PSU and TPP, can be provided if applicable. Provided in either IPv4 or IPv6 format.",
+            "schema": {
+              "type": "string",
+              "example": "192.0.2.1"
+            }
+          },
+          {
+            "name": "PSU-IP-PORT",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": 8080
+            }
+          },
+          {
+            "name": "PSU-User-Agent",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A payments status.",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Same value that was provided in the request.",
+                "style": "simple",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPaymentStatusResponseDto"
+                },
+                "example": {
+                  "paymentId": "HYDPRV90251210181729610663000001",
+                  "transactionStatus": "RCVD",
+                  "scaMethods": [
+                    {
+                      "authenticationType": "PHOTO_OTP",
+                      "authenticationMethodId": "bankIdQr",
+                      "name": "Mobilt BankId with QR-code",
+                      "explanation": "Mobilt BankId with QR-code scanning"
+                    },
+                    {
+                      "authenticationType": "CHIP_OTP",
+                      "authenticationMethodId": "bankIdSameDevice",
+                      "name": "BankId on same device",
+                      "explanation": "BankID with auto start token"
+                    },
+                    {
+                      "authenticationType": "CHIP_OTP",
+                      "authenticationMethodId": "digipass",
+                      "name": "Digipass",
+                      "explanation": "Digipass using redirect to SEB pages"
+                    },
+                    {
+                      "authenticationType": "CHIP_OTP",
+                      "authenticationMethodId": "mobiltbankId",
+                      "name": "Mobilt BankId",
+                      "explanation": "Mobilt BankID using redirect to SEB pages"
+                    },
+                    {
+                      "authenticationType": "CHIP_OTP",
+                      "authenticationMethodId": "bankIdOnCard",
+                      "name": "BankId on card",
+                      "explanation": "BankID on card using redirect to SEB pages"
+                    }
+                  ],
+                  "_links": {
+                    "startAuthorisationWithAuthenticationMethodSelection": {
+                      "href": "/signing-orders/HYDPRV90251210181729610663000001"
+                    },
+                    "status": {
+                      "href": "/payments/private-se-domestic-credit-transfers/HYDPRV90251210181729610663000001/status"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request <br>* Not including required input parameters, such as 'Accept' header. <br>* Specifying a payment that can not be signed, or does not exist in request body.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 400,
+                  "code": "FORMAT_ERROR"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 401,
+                  "code": "CERTIFICATE_INVALID"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 403,
+                  "code": "CONSENT_UNKNOWN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. <br>* Initiating signing for non-existent payment ID or payment product.<br>* Requesting incorrectly constructed URLs will return this error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 404,
+                  "code": "RESOURCE_UNKNOWN"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 405,
+                  "code": "SERVICE_INVALID"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error. <br>* Error caused by remote technical issues, this status code is used for unforeseen technical issues <br>* Please contact support and include information from the instance field.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 500,
+                  "code": "Internal server error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable. <br>* Returned when service is unavailable due to scheduled reasons, such as maintenance.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 503,
+                  "code": "Service unavailable"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/signing-baskets": {
+      "post": {
+        "tags": [
+          "PSD2 Basket"
+        ],
+        "summary": "Starts a multiple payment authentication procedure.",
+        "description": "The signing basket is used to sign multiple payments with one signature. Use this endpoint to create a signing basket containing the payment ids that should be signed with one signature. A basket can be created with maximum 100 payment ids.",
+        "operationId": "initiateBasket",
+        "parameters": [
+          {
+            "name": "PSU-Http-Method",
+            "in": "header",
+            "description": "HTTP method used at the PSU – TPP interface, if available.",
+            "schema": {
+              "type": "string",
+              "example": "POST"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Accepted content types.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "application/json",
+              "enum": [
+                "application/json"
+              ]
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Contains the Bearer Token for OAuth 2.0. ",
+            "required": true,
+            "schema": {
+              "pattern": "^Bearer\\s+.+$",
+              "type": "string"
+            },
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1d_etc"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "Parameter is either an request identification id or a payment reference identification used when initiating a payment. Parameter is set by the third party. Duplicate value on payment reference identification is not allowed. If stated in the request it will be returned in the response. ID of the request, unique to the call, as determined by the initiating party. Same value will be returned in each successful call. Duplicate values being used will lead to errors in payment creation.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+            }
+          },
+          {
+            "name": "PSU-Accept",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,/;q=0.8"
+            }
+          },
+          {
+            "name": "PSU-Accept-Charset",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available. ",
+            "schema": {
+              "type": "string",
+              "example": "ISO-8859-1"
+            }
+          },
+          {
+            "name": "PSU-Accept-Encoding",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate"
+            }
+          },
+          {
+            "name": "PSU-Accept-Language",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "en-US,en;q=0.9,sv;q=0.8"
+          },
+          {
+            "name": "PSU-Device-ID",
+            "in": "header",
+            "description": "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available.",
+            "schema": {
+              "type": "string",
+              "example": "05a18f38-c218-4d1c-a9d0-ac36763580e1"
+            }
+          },
+          {
+            "name": "PSU-Geo-Location",
+            "in": "header",
+            "description": "The forwarded Geo Location of the corresponding HTTP request between PSU and TPP if available. See RFC2426.",
+            "schema": {
+              "type": "string",
+              "example": "GEO:52.506931,13.144558"
+            }
+          },
+          {
+            "name": "PSU-ID",
+            "in": "header",
+            "description": "Send in an expected user-id to verify that the used Authorization token matches the user expected. Can be set to 10 or 12 digit personal number, or a 6 digit XID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PSU-IP-Address",
+            "in": "header",
+            "description": "The IP Address of the PSU, as determined in the communication between PSU and TPP, can be provided if applicable. Provided in either IPv4 or IPv6 format.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "192.0.2.1"
+            }
+          },
+          {
+            "name": "PSU-IP-PORT",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": 8080
+            }
+          },
+          {
+            "name": "PSU-User-Agent",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiateBasketRequestDto"
+              },
+              "example": {
+                "paymentIds": [
+                  "HYDPRV57250323001100618272000001"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Basket successfully created",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Same value that was provided in the request.",
+                "style": "simple",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+                }
+              },
+              "Location": {
+                "description": "The absolute URL where the created resource can be found.",
+                "style": "simple",
+                "schema": {
+                  "type": "string",
+                  "example": "/signing-baskets/BSKPRV19250904164749169250000000"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InitiateBasketResponseDto"
+                },
+                "example": {
+                  "paymentIds": [
+                    "HYDPRV57250323001100618272000001"
+                  ],
+                  "transactionStatus": "RCVD",
+                  "basketId": "BSKPRV19250904164749169250000000",
+                  "_links": {
+                    "startAuthorisationWithAuthenticationMethodSelection": {
+                      "href": "/signing-orders/BSKPRV19250904164749169250000000"
+                    },
+                    "status": {
+                      "href": "/signing-baskets/BSKPRV19250904164749169250000000"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request <br>* Not including required input parameters, such as 'Accept' header. <br>* Specifying a payment that can not be signed, or does not exist in request body.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 400,
+                  "code": "FORMAT_ERROR"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 401,
+                  "code": "CERTIFICATE_INVALID"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 403,
+                  "code": "CONSENT_UNKNOWN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. <br>* Initiating signing for non-existent payment ID or payment product.<br>* Requesting incorrectly constructed URLs will return this error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 404,
+                  "code": "RESOURCE_UNKNOWN"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 405,
+                  "code": "SERVICE_INVALID"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error. <br>* Error caused by remote technical issues, this status code is used for unforeseen technical issues <br>* Please contact support and include information from the instance field.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 500,
+                  "code": "Internal server error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable. <br>* Returned when service is unavailable due to scheduled reasons, such as maintenance.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 503,
+                  "code": "Service unavailable"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/signing-baskets/{basketId}": {
+      "get": {
+        "tags": [
+          "PSD2 Basket"
+        ],
+        "summary": "Returns status on signing basket.",
+        "description": "Returns the basket, the payments that are part of the signing basket and the overall transaction status. The response will contain a list of available SCA methods that can be used to sign the payments once the basket is ready for signing. Then create an authorisation sub resource using the selected payment SCA method and the basket ID + Link \n\nSigning basket statuses: \n* RCVD - The basket is created \n* RCVD + link, Received, once \"startAuthorisationWithAuthenticationMethodSelection\" link is shown, the payment system has validated the payments, and the basket is ready for signing. Please post authenticationMethodId to suitable authorisations endpoint to continue payment flow.\n* ACTC - All payments in the basket are signed and will be executed on the requested execution date.\n* RJCT - This basket can no longer be used to sign for the payments (e.g. it contains a payment that has been rejected). Please create a new basket with the relevant payments.\n",
+        "operationId": "getBasket",
+        "parameters": [
+          {
+            "name": "basketId",
+            "in": "path",
+            "description": "Id of the basket resource",
+            "required": true,
+            "schema": {
+              "pattern": "^BSKPRV\\d{26}$",
+              "type": "string",
+              "example": "BSKPRV19250904164749169250000000"
+            }
+          },
+          {
+            "name": "PSU-Http-Method",
+            "in": "header",
+            "description": "HTTP method used at the PSU – TPP interface, if available.",
+            "schema": {
+              "type": "string",
+              "example": "GET"
+            }
+          },
+          {
+            "name": "Accept",
+            "in": "header",
+            "description": "Accepted content types.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "application/json",
+              "enum": [
+                "application/json"
+              ]
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Contains the Bearer Token for OAuth 2.0. ",
+            "required": true,
+            "schema": {
+              "pattern": "^Bearer\\s+.+$",
+              "type": "string"
+            },
+            "example": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1d_etc"
+          },
+          {
+            "name": "X-Request-ID",
+            "in": "header",
+            "description": "Parameter is either an request identification id or a payment reference identification used when initiating a payment. Parameter is set by the third party. Duplicate value on payment reference identification is not allowed. If stated in the request it will be returned in the response. ID of the request, unique to the call, as determined by the initiating party. Same value will be returned in each successful call. Duplicate values being used will lead to errors in payment creation.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+            }
+          },
+          {
+            "name": "PSU-Accept",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,/;q=0.8"
+            }
+          },
+          {
+            "name": "PSU-Accept-Charset",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available. ",
+            "schema": {
+              "type": "string",
+              "example": "ISO-8859-1"
+            }
+          },
+          {
+            "name": "PSU-Accept-Encoding",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "gzip, deflate"
+            }
+          },
+          {
+            "name": "PSU-Accept-Language",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "en-US,en;q=0.9,sv;q=0.8"
+          },
+          {
+            "name": "PSU-Device-ID",
+            "in": "header",
+            "description": "UUID (Universally Unique Identifier) for a device, which is used by the PSU, if available.",
+            "schema": {
+              "type": "string",
+              "example": "05a18f38-c218-4d1c-a9d0-ac36763580e1"
+            }
+          },
+          {
+            "name": "PSU-Geo-Location",
+            "in": "header",
+            "description": "The forwarded Geo Location of the corresponding HTTP request between PSU and TPP if available. See RFC2426.",
+            "schema": {
+              "type": "string",
+              "example": "GEO:52.506931,13.144558"
+            }
+          },
+          {
+            "name": "PSU-ID",
+            "in": "header",
+            "description": "Send in an expected user-id to verify that the used Authorization token matches the user expected. Can be set to 10 or 12 digit personal number, or a 6 digit XID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "PSU-IP-Address",
+            "in": "header",
+            "description": "The IP Address of the PSU, as determined in the communication between PSU and TPP, can be provided if applicable. Provided in either IPv4 or IPv6 format.",
+            "schema": {
+              "type": "string",
+              "example": "192.0.2.1"
+            }
+          },
+          {
+            "name": "PSU-IP-PORT",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": 8080
+            }
+          },
+          {
+            "name": "PSU-User-Agent",
+            "in": "header",
+            "description": "The forwarded header field of the HTTP request between PSU and TPP, if available.",
+            "schema": {
+              "type": "string",
+              "example": "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "X-Request-ID": {
+                "description": "Same value that was provided in the request.",
+                "style": "simple",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid",
+                  "example": "ccae853f-4f23-47a3-bd9b-6f6e75a1d3d2"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetBasketResponseDto"
+                },
+                "example": {
+                  "paymentIds": [
+                    "HYDPRV57250323001100618272000001"
+                  ],
+                  "transactionStatus": "RCVD",
+                  "basketId": "BSKPRV19250904164749169250000000",
+                  "scaMethods": [
+                    {
+                      "authenticationType": "PHOTO_OTP",
+                      "authenticationMethodId": "bankIdQr",
+                      "name": "Mobilt BankId with QR-code",
+                      "explanation": "Mobilt BankId with QR-code scanning"
+                    },
+                    {
+                      "authenticationType": "CHIP_OTP",
+                      "authenticationMethodId": "bankIdSameDevice",
+                      "name": "BankId on same device",
+                      "explanation": "BankID with auto start token"
+                    },
+                    {
+                      "authenticationType": "CHIP_OTP",
+                      "authenticationMethodId": "digipass",
+                      "name": "Digipass",
+                      "explanation": "Digipass using redirect to SEB pages"
+                    },
+                    {
+                      "authenticationType": "CHIP_OTP",
+                      "authenticationMethodId": "mobiltbankId",
+                      "name": "Mobilt BankId",
+                      "explanation": "Mobilt BankID using redirect to SEB pages"
+                    },
+                    {
+                      "authenticationType": "CHIP_OTP",
+                      "authenticationMethodId": "bankIdOnCard",
+                      "name": "BankId on card",
+                      "explanation": "BankID on card using redirect to SEB pages"
+                    }
+                  ],
+                  "_links": {
+                    "startAuthorisationWithAuthenticationMethodSelection": {
+                      "href": "/signing-orders/BSKPRV19250904164749169250000000"
+                    },
+                    "status": {
+                      "href": "/signing-baskets/BSKPRV19250904164749169250000000"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request <br>* Not including required input parameters, such as 'Accept' header. <br>* Specifying a payment that can not be signed, or does not exist in request body.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 400,
+                  "code": "FORMAT_ERROR"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 401,
+                  "code": "CERTIFICATE_INVALID"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 403,
+                  "code": "CONSENT_UNKNOWN"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found. <br>* Initiating signing for non-existent payment ID or payment product.<br>* Requesting incorrectly constructed URLs will return this error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 404,
+                  "code": "RESOURCE_UNKNOWN"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 405,
+                  "code": "SERVICE_INVALID"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error. <br>* Error caused by remote technical issues, this status code is used for unforeseen technical issues <br>* Please contact support and include information from the instance field.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 500,
+                  "code": "Internal server error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service unavailable. <br>* Returned when service is unavailable due to scheduled reasons, such as maintenance.",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                  "title": "Text, maximum of 70 characters.",
+                  "detail": "Text, maximum of 500 characters.",
+                  "status": 503,
+                  "code": "Service unavailable"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreditorAccount": {
+        "type": "object",
+        "properties": {
+          "iban": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Creditor account number in IBAN format"
+          },
+          "bgnr": {
+            "pattern": "^(?=^[0-9]+-[0-9]+$)[0-9-]{8,9}$|^[0-9]{7,8}",
+            "type": "string",
+            "description": "Creditor account number in Bankgiro format"
+          },
+          "pgnr": {
+            "pattern": "^(?=^[0-9]+-[0-9]+$)[0-9-]{3,9}$|^[0-9]{2,8}",
+            "type": "string",
+            "description": "Creditor account number in Plusgiro format"
+          }
+        }
+      },
+      "DebtorAccount": {
+        "type": "object",
+        "properties": {
+          "iban": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Debtor account number in IBAN format"
+          },
+          "bban": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Debtor account number in BBAN format"
+          }
+        }
+      },
+      "InitiatePaymentRequestDto": {
+        "type": "object",
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "description": "Templates to be used for payment initiations for customers.",
+            "enum": [
+              "private-se-domestic-own-credit-transfers",
+              "private-se-domestic-credit-transfers",
+              "private-sepa-credit-transfers",
+              "private-se-domestic-alias-credit-transfers"
+            ]
+          },
+          "instructedAmount": {
+            "$ref": "#/components/schemas/InstructedAmount"
+          },
+          "debtorAccount": {
+            "$ref": "#/components/schemas/DebtorAccount"
+          },
+          "debtorAccountMessage": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "A message shown on debtor account statement, max length depending on payment product."
+          },
+          "creditorAccount": {
+            "$ref": "#/components/schemas/CreditorAccount"
+          },
+          "creditorName": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Name of the creditor."
+          },
+          "requestedExecutionDate": {
+            "type": "string",
+            "description": "Requested execution date of transaction in format yyyy-mm-dd. If the date is not a valid bank date for the payment product, then the payment will be rejected.",
+            "format": "date"
+          },
+          "remittanceInformationUnstructured": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Message field to creditor."
+          },
+          "remittanceInformationStructured": {
+            "$ref": "#/components/schemas/RemittanceInformationStructured"
+          },
+          "instructionId": {
+            "type": "string"
+          },
+          "endToEndIdentification": {
+            "type": "string"
+          }
+        }
+      },
+      "InstructedAmount": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "pattern": "^[A-Z]{3}$",
+            "type": "string",
+            "description": "Currency of the amount in ISO 4217 format"
+          },
+          "amount": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Amount to be instructed"
+          }
+        }
+      },
+      "RemittanceInformationStructured": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Free text for CINV or valid OCR for SCOR"
+          },
+          "referenceType": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "SCOR or CINV depending on reference type"
+          }
+        }
+      },
+      "InitiatePaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "pattern": "^HYDPRV\\d{26}$",
+            "type": "string",
+            "description": "The id that SEB creates for the payment"
+          },
+          "templateId": {
+            "type": "string",
+            "description": "Templates to be used for payment initiations for customers.",
+            "enum": [
+              "private-se-domestic-own-credit-transfers",
+              "private-se-domestic-credit-transfers",
+              "private-sepa-credit-transfers",
+              "private-se-domestic-alias-credit-transfers"
+            ]
+          },
+          "transactionStatus": {
+            "type": "string",
+            "description": "Contains the current status description of the payment.",
+            "enum": [
+              "RCVD",
+              "RJCT",
+              "ACTC",
+              "ACSC",
+              "CANC"
+            ]
+          },
+          "instructedAmount": {
+            "$ref": "#/components/schemas/InstructedAmount"
+          },
+          "debtorAccount": {
+            "$ref": "#/components/schemas/DebtorAccount"
+          },
+          "creditorAccount": {
+            "$ref": "#/components/schemas/CreditorAccount"
+          },
+          "debtorAccountMessage": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "A message shown on debtor account statement, max length depending on payment product."
+          },
+          "creditorName": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Name of the creditor."
+          },
+          "requestedExecutionDate": {
+            "type": "string",
+            "description": "Requested execution date of transaction in format yyyy-mm-dd. If the date is not a valid bank date for the payment product, then the payment will be rejected.",
+            "format": "date"
+          },
+          "remittanceInformationUnstructured": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Message field to creditor."
+          },
+          "remittanceInformationStructured": {
+            "$ref": "#/components/schemas/RemittanceInformationStructured"
+          },
+          "instructionId": {
+            "type": "string"
+          },
+          "endToEndIdentification": {
+            "type": "string"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "Links": {
+        "type": "object",
+        "properties": {
+          "startAuthorisationWithAuthenticationMethodSelection": {
+            "$ref": "#/components/schemas/StartAuthorisationWithAuthenticationMethodSelection"
+          },
+          "status": {
+            "$ref": "#/components/schemas/Status"
+          }
+        }
+      },
+      "StartAuthorisationWithAuthenticationMethodSelection": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "href": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "ErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "A URI reference that identifies the problem type.",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string",
+            "description": "Short human readable description of error type."
+          },
+          "detail": {
+            "type": "string",
+            "description": "Detailed human readable text specific to this instance of the error."
+          },
+          "status": {
+            "maximum": 599,
+            "minimum": 100,
+            "type": "integer",
+            "description": "The HTTP status code generated by the origin server for this occurrence of the problem.",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string",
+            "description": "Message code to explain the nature of the underlying error."
+          }
+        }
+      },
+      "ResetResponseDto": {
+        "type": "object",
+        "properties": {
+          "resultMessage": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Human readable result of reset."
+          }
+        }
+      },
+      "GetPaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "description": "Templates to be used for payment initiations for customers.",
+            "enum": [
+              "private-se-domestic-own-credit-transfers",
+              "private-se-domestic-credit-transfers",
+              "private-sepa-credit-transfers",
+              "private-se-domestic-alias-credit-transfers"
+            ]
+          },
+          "instructedAmount": {
+            "$ref": "#/components/schemas/InstructedAmount"
+          },
+          "debtorAccount": {
+            "$ref": "#/components/schemas/DebtorAccount"
+          },
+          "creditorAccount": {
+            "$ref": "#/components/schemas/CreditorAccount"
+          },
+          "debtorAccountMessage": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "A message shown on debtor account statement, max length depending on payment product."
+          },
+          "creditorName": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Name of the creditor."
+          },
+          "remittanceInformationUnstructured": {
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Message field to creditor."
+          },
+          "remittanceInformationStructured": {
+            "$ref": "#/components/schemas/RemittanceInformationStructured"
+          },
+          "requestedExecutionDate": {
+            "type": "string",
+            "description": "Requested execution date of transaction in format yyyy-mm-dd. If the date is not a valid bank date for the payment product, then the payment will be rejected.",
+            "format": "date"
+          },
+          "instructionId": {
+            "type": "string"
+          },
+          "endToEndIdentification": {
+            "type": "string"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "GetPaymentStatusResponseDto": {
+        "type": "object",
+        "properties": {
+          "paymentId": {
+            "pattern": "^HYDPRV\\d{26}$",
+            "type": "string",
+            "description": "The id that SEB creates for the payment"
+          },
+          "transactionStatus": {
+            "type": "string",
+            "description": "Contains the current status description of the payment.",
+            "enum": [
+              "RCVD",
+              "RJCT",
+              "ACTC",
+              "ACSC",
+              "CANC"
+            ]
+          },
+          "scaMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScaMethod"
+            }
+          },
+          "tppMessages": {
+            "pattern": "^.+$",
+            "type": "array",
+            "description": "Message for the Third Party Provider, e.g. if an action needs to be taken by the user during a pending signing or an error message.",
+            "items": {
+              "pattern": "^.+$",
+              "type": "string",
+              "description": "Message for the Third Party Provider, e.g. if an action needs to be taken by the user during a pending signing or an error message."
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "ScaMethod": {
+        "type": "object",
+        "properties": {
+          "authenticationType": {
+            "maxLength": 10,
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Berlin group authentication type definition."
+          },
+          "authenticationMethodId": {
+            "maxLength": 35,
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Authentication method, this value should be sent as an input parameter to select SCA method."
+          },
+          "name": {
+            "maxLength": 35,
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Casual name of method."
+          },
+          "explanation": {
+            "maxLength": 50,
+            "pattern": "^.+$",
+            "type": "string",
+            "description": "Human-readable explanation of the SCA method to show to the PSU."
+          }
+        }
+      },
+      "CancelPaymentResponseDto": {
+        "type": "object",
+        "properties": {
+          "transactionStatus": {
+            "type": "string",
+            "description": "Contains the current status description of the payment.",
+            "enum": [
+              "RCVD",
+              "RJCT",
+              "ACTC",
+              "ACSC",
+              "CANC"
+            ]
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "InitiateBasketRequestDto": {
+        "type": "object",
+        "properties": {
+          "paymentIds": {
+            "type": "array",
+            "description": "Array of paymentIds.",
+            "items": {
+              "type": "string",
+              "description": "Array of paymentIds."
+            }
+          }
+        }
+      },
+      "InitiateBasketResponseDto": {
+        "type": "object",
+        "properties": {
+          "paymentIds": {
+            "type": "array",
+            "description": "Array of paymentIds.",
+            "items": {
+              "type": "string",
+              "description": "Array of paymentIds."
+            }
+          },
+          "transactionStatus": {
+            "type": "string",
+            "description": "Lowest status of any payment in the basket. Baskets with a status of RJCT or ACTC cannot be used to initialize an authorization.",
+            "enum": [
+              "RCVD",
+              "RJCT",
+              "ACTC"
+            ]
+          },
+          "basketId": {
+            "type": "string",
+            "description": "Resource ID of the basket."
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "GetBasketResponseDto": {
+        "type": "object",
+        "properties": {
+          "paymentIds": {
+            "type": "array",
+            "description": "Array of paymentIds.",
+            "items": {
+              "type": "string",
+              "description": "Array of paymentIds."
+            }
+          },
+          "transactionStatus": {
+            "type": "string",
+            "description": "Lowest status of any payment in the basket. Baskets with a status of RJCT or ACTC cannot be used to initialize an authorization.",
+            "enum": [
+              "RCVD",
+              "RJCT",
+              "ACTC"
+            ]
+          },
+          "basketId": {
+            "type": "string",
+            "description": "Resource ID of the basket."
+          },
+          "scaMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScaMethod"
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      }
+    }
+  },
+  "x-tagGroups": [
+    {
+      "name": "Private Payment Initiation",
+      "tags": [
+        "PSD2 Initiation",
+        "PSD2 Basket"
+      ]
+    }
+  ]
+}

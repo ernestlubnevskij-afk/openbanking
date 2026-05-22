@@ -1,0 +1,587 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Private Payment Initiation Templates",
+        "description": "Provides templates for private payment initiations. <br>Notes: The payment product scope will be increasing with time. The supported payment products are: <br>&emsp; - &emsp; private-se-domestic-own-credit-transfers <br>&emsp; - &emsp; private-se-domestic-credit-transfers <br>&emsp; - &emsp; private-sepa-credit-transfers <br>&emsp; - &emsp; private-se-domestic-alias-credit-transfers <br>For other private payment products please visit <a href=\"https://developer.sebgroup.com/products/psd2-payment-initiation/payment-initiation\">Link to V8</a><br>\n",
+        "contact": {
+            "email": "oasis@seb.se"
+        },
+        "version": "1.0.0",
+        "x-seb": {
+            "domain": "DOM15",
+            "tribe": "TRI50",
+            "art": "ART168",
+            "team": "TEAM533"
+        },
+        "x-seb-api": {
+            "id": "3c542126-b3a3-4af6-8743-6282369797ba",
+            "accessibility": "open",
+            "internal-routing-host": "payments"
+        },
+        "x-seb-portal": {
+            "sandbox-uri": "https://api-sandbox.sebgroup.com/pis/private/v1/identified2",
+            "production-uri": "https://tpp-api.sebgroup.com/tpp/pis/private/v1/identified2",
+            "state": "active",
+            "category": "servicing/cash management",
+            "summary": "Payment Initiation",
+            "release-date": "2026-03-16"
+        }
+    },
+    "servers": [
+        {
+            "url": "https://api-sandbox.sebgroup.com/pis/private/v1/identified2",
+            "description": "sandbox-uri"
+        },
+        {
+            "url": "https://tpp-api.sebgroup.com/tpp/pis/private/v1/identified2",
+            "description": "production-uri"
+        }
+    ],
+    "paths": {
+        "/templates": {
+            "get": {
+                "tags": [
+                    "PSD2 Templates"
+                ],
+                "summary": "Provide a list of payment templates for the available payment products.",
+                "description": "Access the template list endpoint to find all the supported payment products in the private payment initiation API. Use the template id in list to receive a partially filled-in payment initiation request. Fill in the template fields and submit it in the payments endpoint to initiate a payment. ",
+                "operationId": "getAllTemplates",
+                "parameters": [
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "description": "Accepted content types.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "application/json",
+                            "enum": [
+                                "application/json"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A template list with descriptions of the payment products.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TemplateResponseDto"
+                                },
+                                "example": [
+                                    {
+                                        "templateId": "private-se-domestic-credit-transfers",
+                                        "description": "The template supports transfers for private customers to a beneficiary account in another Swedish bank participating in Bankgirots dataclearing."
+                                    },
+                                    {
+                                        "templateId": "private-se-domestic-own-credit-transfers",
+                                        "description": "The template supports transfers for private customers between their own accounts in SEB."
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request <br>* Not including required input parameters, such as 'Accept' header. <br>* Specifying a payment that can not be signed, or does not exist in request body.",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 400,
+                                    "code": "FORMAT_ERROR"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 401,
+                                    "code": "CERTIFICATE_INVALID"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 403,
+                                    "code": "CONSENT_UNKNOWN"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found. <br>* Initiating signing for non-existent payment ID or payment product.<br>* Requesting incorrectly constructed URLs will return this error",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 404,
+                                    "code": "RESOURCE_UNKNOWN"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed.",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 405,
+                                    "code": "SERVICE_INVALID"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. <br>* Error caused by remote technical issues, this status code is used for unforeseen technical issues <br>* Please contact support and include information from the instance field.",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 500,
+                                    "code": "Internal server error"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service unavailable. <br>* Returned when service is unavailable due to scheduled reasons, such as maintenance.",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 503,
+                                    "code": "Service unavailable"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/templates/{templateId}": {
+            "get": {
+                "tags": [
+                    "PSD2 Templates"
+                ],
+                "summary": "Returns the previously posted payment template.",
+                "description": "Returns the request body of the previously posted payment template.",
+                "operationId": "getTemplate",
+                "parameters": [
+                    {
+                        "name": "templateId",
+                        "in": "path",
+                        "description": "Describes which payment product this call is in reference to. Needs to match whichever payment you are requesting information",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "private-se-domestic-credit-transfers",
+                            "enum": [
+                                "private-se-domestic-own-credit-transfers",
+                                "private-se-domestic-credit-transfers",
+                                "private-sepa-credit-transfers",
+                                "private-se-domestic-alias-credit-transfers"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "Accept",
+                        "in": "header",
+                        "description": "Accepted content types.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "application/json",
+                            "enum": [
+                                "application/json"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A template that is partially filled-in.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TemplateBodyResponseDto"
+                                },
+                                "example": {
+                                    "templateId": "Optional: private-se-domestic-credit-transfers",
+                                    "instructedAmount": {
+                                        "currency": "Required: SEK ISO 4217 standard format",
+                                        "amount": "Required: Amount in SEK"
+                                    },
+                                    "debtorAccount": {
+                                        "iban": "Conditional: Must be specified if bban not specified: Debtor account number in IBAN format",
+                                        "bban": "Conditional: Must be specified if iban is not specified: Debtor account number in BBAN format: National account number"
+                                    },
+                                    "creditorAccount": {
+                                        "iban": "Required: Creditor account number in IBAN format"
+                                    },
+                                    "debtorAccountMessage": "Optional: A message shown on debtor account statement, max 12 characters",
+                                    "creditorName": "Required: Name of the creditor, max 140 characters",
+                                    "remittanceInformationUnstructured": "Conditional: Must not be present if remittanceInformationStructured is used: Message to the beneficiary, max 140 characters",
+                                    "remittanceInformationStructured": {
+                                        "reference": "Free text for CINV or valid OCR for SCOR",
+                                        "referenceType": "SCOR or CINV depending on reference type"
+                                    },
+                                    "requestedExecutionDate": "Conditional: Desired execution date in YYYY-MM-DD. This could only be sent when called with `payments` path variable e.g. POST /payments/{paymentProduct}",
+                                    "startDate": "Conditional: Recurrent order that will start from specified date in format YYYY-MM-DD. Future day needs to be used. This could only be sent when called with `periodic-payments` path variable e.g. POST /periodic-payments/{paymentProduct}",
+                                    "frequency": "Conditional: Recurrent order that can be repeated `monthly` only. This could only be sent when called with `periodic-payments` path variable e.g. POST /periodic-payments/{paymentProduct}"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request <br>* Not including required input parameters, such as 'Accept' header. <br>* Specifying a payment that can not be signed, or does not exist in request body.",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 400,
+                                    "code": "FORMAT_ERROR"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 401,
+                                    "code": "CERTIFICATE_INVALID"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 403,
+                                    "code": "CONSENT_UNKNOWN"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found. <br>* Initiating signing for non-existent payment ID or payment product.<br>* Requesting incorrectly constructed URLs will return this error",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 404,
+                                    "code": "RESOURCE_UNKNOWN"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed.",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 405,
+                                    "code": "SERVICE_INVALID"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error. <br>* Error caused by remote technical issues, this status code is used for unforeseen technical issues <br>* Please contact support and include information from the instance field.",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 500,
+                                    "code": "Internal server error"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service unavailable. <br>* Returned when service is unavailable due to scheduled reasons, such as maintenance.",
+                        "content": {
+                            "application/problem+json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ErrorResponseDto"
+                                },
+                                "example": {
+                                    "type": "https://berlingroup.com/error-codes/FORMAT_ERROR",
+                                    "title": "Text, maximum of 70 characters.",
+                                    "detail": "Text, maximum of 500 characters.",
+                                    "status": 503,
+                                    "code": "Service unavailable"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "TemplateResponseDto": {
+                "type": "object",
+                "properties": {
+                    "templateId": {
+                        "type": "string",
+                        "description": "Templates to be used for payment initiations for customers.",
+                        "enum": [
+                            "private-se-domestic-own-credit-transfers",
+                            "private-se-domestic-credit-transfers",
+                            "private-se-domestic-alias-credit-transfers",
+                            "private-sepa-credit-transfers"
+                        ]
+                    },
+                    "description": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "Template description"
+                    }
+                }
+            },
+            "ErrorResponseDto": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "description": "A URI reference that identifies the problem type.",
+                        "format": "uri"
+                    },
+                    "title": {
+                        "type": "string",
+                        "description": "Short human readable description of error type."
+                    },
+                    "detail": {
+                        "type": "string",
+                        "description": "Detailed human readable text specific to this instance of the error."
+                    },
+                    "status": {
+                        "maximum": 599,
+                        "minimum": 100,
+                        "type": "integer",
+                        "description": "The HTTP status code generated by the origin server for this occurrence of the problem.",
+                        "format": "int32"
+                    },
+                    "code": {
+                        "type": "string",
+                        "description": "Message code to explain the nature of the underlying error."
+                    }
+                }
+            },
+            "CreditorAccount": {
+                "type": "object",
+                "properties": {
+                    "iban": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "Creditor account number in IBAN format"
+                    },
+                    "bgnr": {
+                        "pattern": "^(?=^[0-9]+-[0-9]+$)[0-9-]{8,9}$|^[0-9]{7,8}",
+                        "type": "string",
+                        "description": "Creditor account number in Bankgiro format"
+                    },
+                    "pgnr": {
+                        "pattern": "^(?=^[0-9]+-[0-9]+$)[0-9-]{3,9}$|^[0-9]{2,8}",
+                        "type": "string",
+                        "description": "Creditor account number in Plusgiro format"
+                    }
+                }
+            },
+            "DebtorAccount": {
+                "type": "object",
+                "properties": {
+                    "iban": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "Debtor account number in IBAN format"
+                    },
+                    "bban": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "Debtor account number in BBAN format"
+                    }
+                }
+            },
+            "InstructedAmount": {
+                "type": "object",
+                "properties": {
+                    "currency": {
+                        "pattern": "^[A-Z]{3}$",
+                        "type": "string",
+                        "description": "Currency of the amount in ISO 4217 format"
+                    },
+                    "amount": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "Amount to be instructed"
+                    }
+                }
+            },
+            "RemittanceInformationStructured": {
+                "type": "object",
+                "properties": {
+                    "reference": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "Free text for CINV or valid OCR for SCOR"
+                    },
+                    "referenceType": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "SCOR or CINV depending on reference type"
+                    }
+                }
+            },
+            "TemplateBodyResponseDto": {
+                "type": "object",
+                "properties": {
+                    "templateId": {
+                        "type": "string",
+                        "description": "Templates to be used for payment initiations for customers.",
+                        "enum": [
+                            "private-se-domestic-own-credit-transfers",
+                            "private-se-domestic-credit-transfers",
+                            "private-se-domestic-alias-credit-transfers",
+                            "private-sepa-credit-transfers"
+                        ]
+                    },
+                    "instructedAmount": {
+                        "$ref": "#/components/schemas/InstructedAmount"
+                    },
+                    "debtorAccount": {
+                        "$ref": "#/components/schemas/DebtorAccount"
+                    },
+                    "debtorAccountMessage": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "A message shown on debtor account statement, max length depending on payment product."
+                    },
+                    "creditorAccount": {
+                        "$ref": "#/components/schemas/CreditorAccount"
+                    },
+                    "creditorName": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "Name of the creditor."
+                    },
+                    "requestedExecutionDate": {
+                        "type": "string",
+                        "description": "Requested execution date of transaction in format yyyy-mm-dd. If the date is not a valid bank date for the payment product, then the payment will be rejected.",
+                        "format": "date"
+                    },
+                    "remittanceInformationUnstructured": {
+                        "pattern": "^.+$",
+                        "type": "string",
+                        "description": "Message field to creditor."
+                    },
+                    "remittanceInformationStructured": {
+                        "$ref": "#/components/schemas/RemittanceInformationStructured"
+                    },
+                    "startDate": {
+                        "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+                        "type": "string",
+                        "description": "The first applicable day of execution for the first generated transfer."
+                    },
+                    "frequency": {
+                        "type": "string",
+                        "description": "Only monthly recurrence is supported.",
+                        "enum": [
+                            "monthly"
+                        ]
+                    },
+                    "instructionId": {
+                        "type": "string"
+                    },
+                    "endToEndIdentification": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
